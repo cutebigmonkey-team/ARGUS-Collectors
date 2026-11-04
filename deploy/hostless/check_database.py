@@ -18,7 +18,7 @@ try:
     from test_postgres import PostgresImport
     suite=unittest.defaultTestLoader.loadTestsFromTestCase(PostgresImport)
     # Tracebacks may contain private URI/row details; keep them out of cloud logs.
-    result=unittest.TextTestRunner(stream=io.StringIO()).run(suite)
+    result=unittest.TextTestRunner(stream=io.StringIO(),failfast=True).run(suite)
     print(json.dumps({'level':'info' if result.wasSuccessful() else 'error',
                       'check':'postgres_recovery','tests':result.testsRun,
                       'failures':len(result.failures),'errors':len(result.errors),
