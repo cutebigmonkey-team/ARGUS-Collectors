@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=77,<83"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "argus-collectors"
+version = "0.1.0"
+description = "Independent public feed parsers and resumable collection primitives"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["beautifulsoup4==4.14.3", "feedparser==6.0.12", "soupsieve==2.9.0", "sgmllib3k==1.0.0", "typing_extensions==4.15.0"]
+
+[project.scripts]
+argus-collectors = "argus_collectors.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

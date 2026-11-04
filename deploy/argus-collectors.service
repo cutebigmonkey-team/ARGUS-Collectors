@@ -1,0 +1,22 @@
+[Unit]
+Description=Bounded public source collection
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=argus-collectors
+Group=argus-collectors
+StateDirectory=argus-collectors
+StateDirectoryMode=0700
+EnvironmentFile=/etc/argus-collectors/runtime.env
+ExecStart=/opt/argus-collectors/venv/bin/argus-collectors --sources /etc/argus-collectors/sources.json --state /var/lib/argus-collectors/state.sqlite3 --metrics /var/lib/argus-collectors/metrics.json --max-sources 20
+TimeoutStartSec=20min
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/argus-collectors
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+MemoryMax=1G

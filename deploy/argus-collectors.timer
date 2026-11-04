@@ -1,0 +1,11 @@
+[Unit]
+Description=Poll due sources on the cloud VM
+
+[Timer]
+OnBootSec=60s
+OnUnitInactiveSec=60s
+AccuracySec=1s
+Unit=argus-collectors.service
+
+[Install]
+WantedBy=timers.target

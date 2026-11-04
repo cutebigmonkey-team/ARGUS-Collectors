@@ -1,0 +1,130 @@
+{
+  "version": 1,
+  "modules": [
+    {
+      "module": "candidate_audit",
+      "source_sha256": "636a63e8ece411904d30ad92ea9f5764ca2533ef09c1ffde6223b66ffa1b257d",
+      "export_sha256": "a5962fc1f1d062e82211f04f045706a5a4caab3897e2812ce0a08497b6cdf457",
+      "symbols": "module"
+    },
+    {
+      "module": "source_health",
+      "source_sha256": "4d0e4bfeb67eafebc24a45d1b9938b396a298b422973849c9aacb89510853a65",
+      "export_sha256": "4d0e4bfeb67eafebc24a45d1b9938b396a298b422973849c9aacb89510853a65",
+      "symbols": "module"
+    },
+    {
+      "module": "social_links",
+      "source_sha256": "506a8a11b54b918785755978db32b9f4a2354bd5c9ec89b7800027ec4cecb3ce",
+      "export_sha256": "4454d38d9596bc7783c3c26992401777246a7a550b8f0ed02a477c311f08867a",
+      "symbols": "module"
+    },
+    {
+      "module": "url_identity",
+      "source_sha256": "eb1a1290867650211d42f39a6a16bec32ff320ded553e89e5894391cc59de819",
+      "export_sha256": "eb1a1290867650211d42f39a6a16bec32ff320ded553e89e5894391cc59de819",
+      "symbols": "module"
+    },
+    {
+      "module": "record_quality",
+      "source_sha256": "3cc8405d59bcc78232ed8387af20b7b6bf120860e2ae0db1c511853e9198708b",
+      "export_sha256": "3cc8405d59bcc78232ed8387af20b7b6bf120860e2ae0db1c511853e9198708b",
+      "symbols": "module"
+    },
+    {
+      "module": "web_pages",
+      "source_sha256": "ad273d3f4b757d57b2de61e0cb473ed1e1ce20fa3913d7d8e21c431ce7ada72c",
+      "export_sha256": "d18f074b0bf01e5e580419297094c9e02e6f803f115203fa43a09957947615bd",
+      "symbols": "module"
+    },
+    {
+      "module": "article_enrichment",
+      "source_sha256": "0cde4523735649d819dd389dc5bf22976c50856578f71188bb9702810be8cf1b",
+      "export_sha256": "59f41df3140fffbf91d11f5c9ab714abe811255a93ec4972366c8c1e027ebea3",
+      "symbols": "module"
+    },
+    {
+      "module": "crawl_common",
+      "source_sha256": "f197c9368634b8af8f5af4f9eaa8586c9875e68e3cbb6f9c150ed5d4d57e4b9f",
+      "export_sha256": "89f4d92b5130c4f20f37c2fcf78d22e2b733d7b8bb827392f063ba822bfc3d37",
+      "symbols": "module"
+    },
+    {
+      "module": "news_sitemap",
+      "source_sha256": "1f99b64ae4998743d06f13e7850fc1dcd6c25e53e3e1b43c7982d3c7b6c78741",
+      "export_sha256": "eef6827a55436c7831c2aa9ecadc07c3ae2f03dfe2461e78a166e08bda1ac9c1",
+      "symbols": "module"
+    },
+    {
+      "module": "feed_history",
+      "source_sha256": "555ab54f72585edcefe10404a36c83040d53ed02a118d5987b722dd2b5478002",
+      "export_sha256": "dd7ed2cc2196cfef549aa43aacddc679eed4a0d90a5db371cd016a5d8a48e090",
+      "symbols": "module"
+    },
+    {
+      "module": "telegram_history",
+      "source_sha256": "b7e89aa3f498dbc0b9abaf8a796aa4eb9643b54ada0e8fe96df51f8f195a07e7",
+      "export_sha256": "9461f334c38ffca30f7d2abbd945967bbe2fa0c96fc538796d886c93f353731d",
+      "symbols": "module"
+    },
+    {
+      "module": "youtube_feed",
+      "source_sha256": "8aae7af78ea00057c8bdb75db87b457493a34885f48a9f600da890ba500ba330",
+      "export_sha256": "dd69b582db85f1996eb014f4e5b347b8f28860c51137c56d02077295b1d4fbfb",
+      "symbols": "module"
+    },
+    {
+      "module": "core",
+      "source_sha256": "803917d8ce2d84cfa825d818568f37aff5bb51db267a7742de2304d164ca817a",
+      "export_sha256": "58289bbfb1fe101881489fada5f078ea407fd39b2deb964b6181e7ca89032fdb",
+      "symbols": [
+        "HOSTS",
+        "IDENTITIES",
+        "PLATFORMS",
+        "Redirects",
+        "date",
+        "error_code",
+        "feed_date",
+        "feed_entries",
+        "feed_posts",
+        "fetch",
+        "now",
+        "plain",
+        "post",
+        "public_host",
+        "safe_url",
+        "social_url",
+        "source_valid",
+        "telegram_html",
+        "url_ok"
+      ]
+    },
+    {
+      "module": "browser_public",
+      "source_sha256": "2e16d883b0af765481ed261b232e94b9ade3caefac12c900c7c764dae8c50de9",
+      "export_sha256": "30e9ddd410507b75606f6eb83b7c62aed5e86e8153e2bace21d88cb8b6164d1a",
+      "symbols": [
+        "page_error"
+      ]
+    },
+    {
+      "module": "source_discovery",
+      "source_sha256": "61003704373918ac2c59b177f7c6df06ebd4d1288440f6ec83e030452a37e7ec",
+      "export_sha256": "c08015db17baf779ec34560234452c2cb7ba60b3f876e8ed2435f11129d8bcec",
+      "symbols": [
+        "PROFILES",
+        "RESERVED",
+        "profile"
+      ]
+    },
+    {
+      "module": "import_sheet",
+      "source_sha256": "037abae578dbd0b5e69afc439c2f82768391d4d84a0211628485b2340d9916b8",
+      "export_sha256": "806f6494e192c9a9b37d68a45d2c22cf9189922c2262c8393f34253fb990c7d1",
+      "symbols": [
+        "is_operator_source",
+        "normalize"
+      ]
+    }
+  ]
+}
