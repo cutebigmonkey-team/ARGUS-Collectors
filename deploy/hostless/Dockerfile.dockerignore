@@ -1,0 +1,14 @@
+*
+!pyproject.toml
+!README.md
+!requirements.lock
+!requirements-postgres.lock
+!src/
+!src/**
+!tests/
+!tests/**
+!deploy/
+!deploy/hostless/
+!deploy/hostless/check_database.py
+src/**/__pycache__
+tests/**/__pycache__
