@@ -29,6 +29,8 @@ def deliver(journal,sink):
             continue
         payload=json.loads(row['payload'])
         try:
+            if hasattr(journal,'check_session'):
+                journal.check_session()
             receipt=sink.send(payload) if payload['result']['posts'] else {
                 'batch_id':row['id'],'accepted_ids':[],'inserted_ids':[]}
             journal.acknowledge(row['id'],receipt)
@@ -41,7 +43,9 @@ def deliver(journal,sink):
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--sources',type=Path,required=True)
-    parser.add_argument('--state',type=Path,required=True)
+    backend=parser.add_mutually_exclusive_group(required=True)
+    backend.add_argument('--state',type=Path)
+    backend.add_argument('--postgres',action='store_true',help='Use DATABASE_URL with verified TLS and session pooling')
     parser.add_argument('--metrics',type=Path,required=True)
     parser.add_argument('--max-sources',type=int,default=20)
     args=parser.parse_args()
@@ -53,30 +57,40 @@ def main():
     if any(s.get('platform') not in SUPPORTED for s in sources):
         parser.error('unsupported platform; retain its existing production collector')
     sink=HttpsSink(os.environ.get('ARGUS_IMPORT_URL',''),os.environ.get('ARGUS_IMPORT_TOKEN',''))
-    args.state.parent.mkdir(parents=True,exist_ok=True)
-    with single_writer(args.state):
-        journal=Journal(args.state)
-        try:
+    @contextmanager
+    def open_state():
+        if args.postgres:
+            from .postgres import open_postgres
+            with open_postgres(os.environ.get('DATABASE_URL','')) as journal:
+                yield journal
+        else:
+            args.state.parent.mkdir(parents=True,exist_ok=True)
+            with single_writer(args.state):
+                journal=Journal(args.state)
+                try:yield journal
+                finally:journal.close()
+
+    with open_state() as journal:
+        deliver(journal,sink)
+        due=[]
+        for source in sources:
+            cursor,health=journal.state(source)
+            when=health.get('next_check_at')
+            if not journal.pending(source['id']) and (not when or datetime.fromisoformat(when)<=datetime.now(timezone.utc)):
+                due.append((when or '',str(source['id']),source,cursor))
+        for _,_,source,cursor in sorted(due)[:args.max_sources]:
+            if hasattr(journal,'check_session'):
+                journal.check_session()
+            if not journal.host_ready(source):
+                continue
+            journal.stage(source,collect(source,cursor))
             deliver(journal,sink)
-            due=[]
-            for source in sources:
-                cursor,health=journal.state(source)
-                when=health.get('next_check_at')
-                if not journal.pending(source['id']) and (not when or datetime.fromisoformat(when)<=datetime.now(timezone.utc)):
-                    due.append((when or '',str(source['id']),source,cursor))
-            for _,_,source,cursor in sorted(due)[:args.max_sources]:
-                if not journal.host_ready(source):
-                    continue
-                journal.stage(source,collect(source,cursor))
-                deliver(journal,sink)
-            deliver(journal,sink)
-            metrics=journal.metrics()
-            metrics['runtime_last_tick_at']=datetime.now(timezone.utc).isoformat()
-            args.metrics.parent.mkdir(parents=True,exist_ok=True)
-            temporary=args.metrics.with_suffix('.tmp')
-            temporary.write_text(json.dumps(metrics),encoding='utf-8')
-            temporary.replace(args.metrics)
-            # Keep source URLs, content and credentials out of service logs.
-            print(json.dumps({k:v for k,v in metrics.items() if k!='sources'}))
-        finally:
-            journal.close()
+        deliver(journal,sink)
+        metrics=journal.metrics()
+        metrics['runtime_last_tick_at']=datetime.now(timezone.utc).isoformat()
+        args.metrics.parent.mkdir(parents=True,exist_ok=True)
+        temporary=args.metrics.with_suffix('.tmp')
+        temporary.write_text(json.dumps(metrics),encoding='utf-8')
+        temporary.replace(args.metrics)
+        # Keep source URLs, content and credentials out of service logs.
+        print(json.dumps({k:v for k,v in metrics.items() if k!='sources'}))

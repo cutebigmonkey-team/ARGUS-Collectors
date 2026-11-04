@@ -16,6 +16,7 @@ from .source_health import update
 
 
 class Journal:
+    outbox_order = 'rowid'
     def __init__(self, path):
         self.db = sqlite3.connect(path)
         self.db.row_factory = sqlite3.Row
@@ -42,7 +43,7 @@ class Journal:
 
     def pending(self, source_id=None):
         if source_id is None:
-            return self.db.execute('SELECT * FROM outbox ORDER BY rowid').fetchall()
+            return self.db.execute('SELECT * FROM outbox ORDER BY '+self.outbox_order).fetchall()
         return self.db.execute('SELECT * FROM outbox WHERE source_id=?', (str(source_id),)).fetchone()
 
     def host_ready(self, source):
@@ -56,7 +57,7 @@ class Journal:
         return True
 
     def _count(self, key, value):
-        self.db.execute('INSERT INTO metrics VALUES (?,?) ON CONFLICT(name) DO UPDATE SET value=value+excluded.value', (key,value))
+        self.db.execute('INSERT INTO metrics VALUES (?,?) ON CONFLICT(name) DO UPDATE SET value=metrics.value+excluded.value', (key,value))
 
     def stage(self, source, result):
         """Persist before sending; keep enrichments even for existing identities."""
@@ -124,9 +125,9 @@ class Journal:
                             (failures,until.isoformat(),code,batch_id))
 
     def metrics(self):
-        values=dict(self.db.execute('SELECT name,value FROM metrics').fetchall())
-        values['queue_depth']=self.db.execute('SELECT count(*) FROM outbox').fetchone()[0]
-        values['unique_archived_identities']=self.db.execute('SELECT count(*) FROM seen').fetchone()[0]
+        values={row['name']:row['value'] for row in self.db.execute('SELECT name,value FROM metrics')}
+        values['queue_depth']=self.db.execute('SELECT count(*) AS count FROM outbox').fetchone()['count']
+        values['unique_archived_identities']=self.db.execute('SELECT count(*) AS count FROM seen').fetchone()['count']
         values['sources']=[{'source_id':r['id'],**json.loads(r['health'])}
                            for r in self.db.execute('SELECT id,health FROM sources')]
         return values

@@ -22,10 +22,15 @@ def result():
 
 
 class DurableImport(unittest.TestCase):
+    def open_journal(self):
+        return Journal(self.path)
+
     def setUp(self):
+        import sqlite3
+        self.integrity_error=sqlite3.IntegrityError
         self.directory=tempfile.TemporaryDirectory()
         self.path=Path(self.directory.name)/'state.sqlite3'
-        self.journal=Journal(self.path)
+        self.journal=self.open_journal()
 
     def tearDown(self):
         self.journal.close()
@@ -38,7 +43,7 @@ class DurableImport(unittest.TestCase):
     def test_restart_replays_same_batch_before_cursor_commit(self):
         batch=self.journal.stage(SOURCE,result())
         self.assertEqual(self.journal.state(SOURCE),({},{}))
-        self.journal.close();self.journal=Journal(self.path)
+        self.journal.close();self.journal=self.open_journal()
         self.assertEqual(self.journal.pending()[0]['id'],batch)
         self.ack(batch)
         self.assertEqual(self.journal.state(SOURCE)[0]['pending'],['https://example.org/page/2'])
@@ -68,9 +73,8 @@ class DurableImport(unittest.TestCase):
         self.assertEqual(self.journal.metrics()['rate_limits'],1)
 
     def test_only_one_pending_batch_per_source(self):
-        import sqlite3
         self.journal.stage(SOURCE,result())
-        with self.assertRaises(sqlite3.IntegrityError):self.journal.stage(SOURCE,result())
+        with self.assertRaises(self.integrity_error):self.journal.stage(SOURCE,result())
         self.assertEqual(self.journal.metrics()['checked_sources'],1)
 
     def test_delivery_failure_is_durable_and_backed_off(self):
