@@ -1,5 +1,5 @@
 # ARGUS-Collectors
-
+  
 Independent Python collection modules extracted from ARGUS. The application,
 source catalogs, credentials, storage writers and operational reports remain private.
 
